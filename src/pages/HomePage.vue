@@ -8,10 +8,10 @@ export default {
   data() {
     return {
       bannerProps: {
-        title: "FitForge",
-        tagline: "Train smarter. Track every rep. Build discipline that lasts.",
-        destination: "workouts",
-        buttonLabel: "Start Training"
+        title: "MovieVault",
+        tagline: "Discover films. Track your watchlist. Build your own cinematic universe.",
+        destination: "movies",
+        buttonLabel: "Explore Movies"
       }
     }
   }
@@ -28,12 +28,12 @@ export default {
 
       <div class="hero-content">
 
-        <div class="badge">🔥 Fitness Tracking System</div>
+        <div class="badge">🎬 Movie Library System</div>
 
         <BannerComponent :bannerProps="bannerProps" />
 
         <p class="subtext">
-          Log workouts, monitor progress, and stay consistent — every single day.
+          Browse movies, manage your collection, and keep track of everything you watch.
         </p>
 
       </div>
@@ -47,14 +47,13 @@ export default {
 .home-wrapper {
   min-height: 100vh;
   background: radial-gradient(circle at top,
-      #0f172a,
-      #0b0b0b 55%,
-      #111827 120%);
+      #0b0b0f,
+      #111827 55%,
+      #1f2937 120%);
   color: #e2e8f0;
   overflow-x: hidden;
 }
 
-/* HERO */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -65,7 +64,6 @@ export default {
   padding: 2rem;
 }
 
-/* glowing background blobs */
 .glow {
   position: absolute;
   width: 400px;
@@ -76,25 +74,23 @@ export default {
 }
 
 .glow-1 {
-  background: #ff6b00;
+  background: #60a5fa;
   top: -100px;
   left: -100px;
 }
 
 .glow-2 {
-  background: #38bdf8;
+  background: #ef4444;
   bottom: -120px;
   right: -120px;
 }
 
-/* hero content */
 .hero-content {
   position: relative;
   z-index: 2;
   max-width: 800px;
 }
 
-/* small badge */
 .badge {
   display: inline-block;
   padding: 6px 12px;
@@ -103,14 +99,13 @@ export default {
   letter-spacing: 1px;
   text-transform: uppercase;
 
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  color: #38bdf8;
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  color: #60a5fa;
 
   margin-bottom: 1rem;
 }
 
-/* extra tagline under banner */
 .subtext {
   margin-top: 1.5rem;
   font-size: 1rem;
@@ -118,16 +113,6 @@ export default {
   line-height: 1.6;
 }
 
-/* highlights section */
-.highlights-section {
-  padding: 5rem 1rem;
-  background: linear-gradient(180deg,
-      rgba(15, 23, 42, 0.8),
-      rgba(17, 24, 39, 1));
-  border-top: 1px solid rgba(56, 189, 248, 0.15);
-}
-
-/* responsive */
 @media (max-width: 768px) {
   .glow {
     width: 250px;

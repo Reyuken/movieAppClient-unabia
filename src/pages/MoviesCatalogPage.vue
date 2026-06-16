@@ -1,16 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { Notyf } from 'notyf'
 import api from '../api.js'
-import { useGlobalStore } from '@/stores/global.js'
 
-import AddMoviesComponent from '@/components/AddMoviesComponent.vue'
-import UpdateMoviesComponent from '@/components/UpdateMoviesComponent.vue'
 import ViewMoviesComponent from '@/components/ViewMoviesComponent.vue'
 
-const router = useRouter()
-const store = useGlobalStore()
 const notyf = new Notyf()
 
 const movies = ref([])
@@ -48,10 +42,6 @@ function viewMovie(movie) {
       Loading movies...
     </div>
 
-    <!-- <div v-else-if="!store.user.token" class="empty">
-      Login to view movies 🎬
-    </div> -->
-
     <div v-else-if="!movies || movies.length === 0" class="empty">
       No movies found 🍿
     </div>
@@ -81,7 +71,6 @@ function viewMovie(movie) {
 
     </div>
 
-    <!-- VIEW MODAL -->
     <ViewMoviesComponent ref="viewModal" />
 
   </div>

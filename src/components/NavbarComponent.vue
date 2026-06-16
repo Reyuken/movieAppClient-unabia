@@ -1,8 +1,9 @@
 <script setup>
 import { useGlobalStore } from '../stores/global';
+import { storeToRefs } from 'pinia';
 
 const store = useGlobalStore();
-const user = store.user;
+const { user } = storeToRefs(store);
 </script>
 
 <template>
@@ -10,7 +11,6 @@ const user = store.user;
 		<div class="container">
 
 			<router-link :to="{ path: '/' }" class="navbar-brand fw-bold brand-text d-flex align-items-center gap-2">
-				<!-- <img src="/favicon/favicon-32x32.png" alt="MovieVault Logo" class="logo-img" /> -->
 				MovieVault
 			</router-link>
 
@@ -18,46 +18,39 @@ const user = store.user;
 				<span class="navbar-toggler-icon"></span>
 			</button>
 
-			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="collapse navbar-collapse" id="navbarNavAltMarkup"> 
 				<div class="navbar-nav ms-auto">
 
-					<!-- Admin Badge -->
-					<div v-if="user.isAdmin" class="admin-badge">
+					<div v-if="user?.isAdmin" class="admin-badge">
 						<span class="dot"></span>
 						Admin
 					</div>
 
-					<!-- Movies -->
 					<router-link :to="{ name: 'Movies' }" class="nav-link nav-item-custom">
 						Movies
 					</router-link>
 
-					<!-- Watchlist (Users only) -->
-					<router-link
-						v-if="user.email && !user.isAdmin"
-						:to="{ name: 'Watchlist' }"
+					<!-- <router-link v-if="user?.token && !user?.isAdmin" :to="{ name: 'Watchlist' }"
 						class="nav-link nav-item-custom">
 						My List
-					</router-link>
+					</router-link> -->
 
-					<!-- Admin Dashboard -->
-					<router-link
-						v-if="user.isAdmin"
-						:to="{ name: 'AdminDashboard' }"
+					<!-- Admin dashboard -->
+					<!-- <router-link v-if="user?.isAdmin" :to="{ name: 'AdminMoviesCatalogPage' }"
 						class="nav-link nav-item-custom">
-						Dashboard
-					</router-link>
+						Admin Dashboard
+					</router-link> -->
 
-					<!-- Auth -->
-					<router-link v-if="!user.email" :to="{ name: 'Register' }" class="nav-link nav-item-custom">
+					<router-link v-if="!user?.token" :to="{ name: 'Register' }" class="nav-link nav-item-custom">
 						Register
 					</router-link>
 
-					<router-link v-if="!user.email" :to="{ name: 'Login' }" class="nav-link nav-item-custom">
+					<router-link v-if="!user?.token" :to="{ name: 'Login' }" class="nav-link nav-item-custom">
 						Login
 					</router-link>
 
-					<router-link v-if="user.email" :to="{ name: 'Logout' }" class="nav-link nav-item-custom text-danger">
+					<router-link v-if="user?.token" :to="{ name: 'Logout' }"
+						class="nav-link nav-item-custom text-danger">
 						Logout
 					</router-link>
 
@@ -104,12 +97,6 @@ const user = store.user;
 	color: #f1f5f9 !important;
 	font-size: 1.4rem;
 	letter-spacing: 0.5px;
-}
-
-.logo-img {
-	width: 28px;
-	height: 28px;
-	object-fit: contain;
 }
 
 .nav-item-custom {

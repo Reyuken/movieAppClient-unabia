@@ -53,7 +53,7 @@ async function submitComment() {
   if (!commentInput.value.trim()) return
 
   try {
-    await api.post(`/addComment/${movie.value._id}`, {
+    await api.post(`/movies/addComment/${movie.value._id}`, {
       comment: commentInput.value
     })
 

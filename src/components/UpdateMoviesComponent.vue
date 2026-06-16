@@ -17,6 +17,9 @@ const movieId = ref(null)
 
 const title = ref('')
 const genre = ref('')
+const director = ref('')
+const year = ref('')
+const description = ref('')
 
 function openAddModal() {
     if (!store.user.token) {
@@ -30,6 +33,9 @@ function openAddModal() {
 
     title.value = ''
     genre.value = ''
+    director.value = ''
+    year.value = ''
+    description.value = ''
 
     isOpen.value = true
 }
@@ -44,42 +50,51 @@ function openEditModal(movie) {
     isEditMode.value = true
     movieId.value = movie._id
 
-    // Fill form with existing data
     title.value = movie.title
     genre.value = movie.genre
+    director.value = movie.director
+    year.value = movie.year
+    description.value = movie.description
 
     isOpen.value = true
 }
 
 function closeModal() {
     isOpen.value = false
+
     title.value = ''
     genre.value = ''
+    director.value = ''
+    year.value = ''
+    description.value = ''
+
     movieId.value = null
 }
 
 async function submitMovie() {
 
-    if (!title.value || !genre.value) return
+    if (!title.value || !genre.value || !director.value || !year.value) {
+        return notyf.error("Please complete all required fields")
+    }
 
     try {
 
+        const payload = {
+            title: title.value,
+            genre: genre.value,
+            director: director.value,
+            year: year.value,
+            description: description.value
+        }
+
         if (isEditMode.value) {
 
-            await api.patch(`/movies/updateMovie/${movieId.value}`, {
-                title: title.value,
-                genre: genre.value
-            })
-
+            await api.patch(`/movies/updateMovie/${movieId.value}`, payload)
             notyf.success("Movie updated")
 
         } else {
 
-            await api.post('/movies/addMovie', {
-                title: title.value,
-                genre: genre.value
-            })
-
+            await api.post('/movies/addMovie', payload)
             notyf.success("Movie added")
         }
 
@@ -88,6 +103,7 @@ async function submitMovie() {
 
     } catch (err) {
         notyf.error("Operation failed")
+        console.error(err)
     }
 }
 
@@ -98,17 +114,20 @@ defineExpose({
 </script>
 
 <template>
-
     <div v-if="isOpen" class="modal-backdrop" @click.self="closeModal">
 
         <div class="modal-box">
 
-            <h3>
+            <h3 class="title">
                 {{ isEditMode ? 'Update Movie' : 'Add Movie' }}
             </h3>
 
             <input v-model="title" placeholder="Movie title" />
-            <input v-model="genre" placeholder="Genre (e.g. Action, Drama)" />
+            <input v-model="director" placeholder="Director" />
+            <input v-model="year" placeholder="Year (e.g. 2024)" />
+            <input v-model="genre" placeholder="Genre" />
+
+            <textarea v-model="description" placeholder="Description"></textarea>
 
             <div class="actions">
 
@@ -125,14 +144,13 @@ defineExpose({
         </div>
 
     </div>
-
 </template>
 
 <style scoped>
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.75);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -142,12 +160,18 @@ defineExpose({
 .modal-box {
     background: #111827;
     padding: 2rem;
-    border-radius: 12px;
-    width: 320px;
+    border-radius: 14px;
+    width: 360px;
     border: 1px solid rgba(96, 165, 250, 0.3);
 }
 
-input {
+.title {
+    color: #60a5fa;
+    margin-bottom: 1rem;
+}
+
+input,
+textarea {
     width: 100%;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
@@ -156,6 +180,11 @@ input {
     border: none;
     background: #1f2937;
     color: white;
+}
+
+textarea {
+    min-height: 80px;
+    resize: none;
 }
 
 .actions {
@@ -170,6 +199,7 @@ input {
     padding: 0.5rem 1rem;
     border-radius: 999px;
     cursor: pointer;
+    color: white;
 }
 
 .cancel {
@@ -178,5 +208,6 @@ input {
     padding: 0.5rem 1rem;
     border-radius: 999px;
     cursor: pointer;
+    color: white;
 }
 </style>

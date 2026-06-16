@@ -14,7 +14,10 @@ const notyf = new Notyf()
 const isOpen = ref(false)
 
 const title = ref('')
+const director = ref('')
+const year = ref('')
 const genre = ref('')
+const description = ref('')
 
 function openModal() {
     if (!store.user.token) {
@@ -28,62 +31,78 @@ function openModal() {
 
 function closeModal() {
     isOpen.value = false
+
     title.value = ''
+    director.value = ''
+    year.value = ''
     genre.value = ''
+    description.value = ''
 }
 
 async function submitMovie() {
 
-    if (!title.value || !genre.value) return
+    if (!title.value || !director.value || !year.value || !genre.value) {
+        return notyf.error("Please fill all required fields")
+    }
 
     try {
         await api.post('/movies/addMovie', {
             title: title.value,
-            genre: genre.value
+            director: director.value,
+            year: year.value,
+            genre: genre.value,
+            description: description.value
         })
 
-        notyf.success("Movie added")
+        notyf.success("Movie added 🎬")
 
         closeModal()
         emit('refresh')
 
     } catch (err) {
         notyf.error("Failed to add movie")
+        console.error(err)
     }
 }
+
+defineExpose({
+    openModal
+})
 </script>
 
 <template>
+  <button class="open-btn" @click="openModal">
+    + Add Movie
+  </button>
 
-    <button class="open-btn" @click="openModal">
-        + Add Movie
-    </button>
+  <div v-if="isOpen" class="modal-backdrop" @click.self="closeModal">
 
-    <div v-if="isOpen" class="modal-backdrop" @click.self="closeModal">
+    <div class="modal-box">
 
-        <div class="modal-box">
+      <h3>Add Movie</h3>
 
-            <h3>Add Movie</h3>
+      <input v-model="title" placeholder="Title" />
+      <input v-model="director" placeholder="Director" />
+      <input v-model="year" placeholder="Year (e.g. 2024)" />
+      <input v-model="genre" placeholder="Genre" />
 
-            <input v-model="title" placeholder="Movie title" />
-            <input v-model="genre" placeholder="Genre (e.g. Action, Drama)" />
+      <textarea v-model="description" placeholder="Description"></textarea>
 
-            <div class="actions">
+      <div class="actions">
 
-                <button class="submit" @click="submitMovie">
-                    Save
-                </button>
+        <button class="submit" @click="submitMovie">
+          Save
+        </button>
 
-                <button class="cancel" @click="closeModal">
-                    Cancel
-                </button>
+        <button class="cancel" @click="closeModal">
+          Cancel
+        </button>
 
-            </div>
-
-        </div>
+      </div>
 
     </div>
 
+  </div>
 </template>
 
 <style scoped>
@@ -95,12 +114,13 @@ async function submitMovie() {
     font-weight: bold;
     cursor: pointer;
     margin-bottom: 1rem;
+    color: #0b0b0f;
 }
 
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.75);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -110,20 +130,26 @@ async function submitMovie() {
 .modal-box {
     background: #111827;
     padding: 2rem;
-    border-radius: 12px;
-    width: 320px;
+    border-radius: 14px;
+    width: 360px;
     border: 1px solid rgba(96, 165, 250, 0.3);
 }
 
-input {
+input,
+textarea {
     width: 100%;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.6rem;
     border-radius: 8px;
     border: none;
     background: #1f2937;
     color: white;
+}
+
+textarea {
+    min-height: 90px;
+    resize: none;
 }
 
 .actions {
@@ -138,6 +164,7 @@ input {
     padding: 0.5rem 1rem;
     border-radius: 999px;
     cursor: pointer;
+    color: white;
 }
 
 .cancel {
@@ -146,5 +173,6 @@ input {
     padding: 0.5rem 1rem;
     border-radius: 999px;
     cursor: pointer;
+    color: white;
 }
 </style>

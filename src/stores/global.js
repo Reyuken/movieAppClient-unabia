@@ -6,14 +6,15 @@ export const useGlobalStore = defineStore('global', () => {
 
     const user = reactive({
         token: localStorage.getItem('token') || null,
-        email: null
+        email: null,
+        isAdmin: false
     })
 
     async function getUserDetails() {
+        const token = localStorage.getItem('token')
+        user.token = token
 
-        user.token = localStorage.getItem('token')
-
-        if (!user.token) {
+        if (!token) {
             clearUser()
             return
         }
@@ -21,10 +22,8 @@ export const useGlobalStore = defineStore('global', () => {
         try {
             const { data } = await api.get('/users/details')
 
-            // console.log("DETAILS RESPONSE:", data)
-
-            // backend: { user: { email: ... } }
             user.email = data.user.email
+            user.isAdmin = data.user.isAdmin || false
 
         } catch (err) {
             console.error('Failed to fetch user details:', err)
@@ -35,11 +34,14 @@ export const useGlobalStore = defineStore('global', () => {
     function setUser(token) {
         user.token = token
         localStorage.setItem('token', token)
+
+        getUserDetails()
     }
 
     function clearUser() {
         user.token = null
         user.email = null
+        user.isAdmin = false
         localStorage.removeItem('token')
     }
 

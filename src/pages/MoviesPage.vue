@@ -1,10 +1,12 @@
 <script>
 import { useGlobalStore } from '../stores/global.js'
 import MoviesCatalogPage from './MoviesCatalogPage.vue'
+import AdminMoviesCatalogPage from './AdminMoviesCatalogPage.vue'
 
 export default {
   components: {
     MoviesCatalogPage,
+    AdminMoviesCatalogPage
   },
   setup() {
     const { user } = useGlobalStore()
@@ -21,7 +23,9 @@ export default {
 
     <div class="page-container">
 
-      <MoviesCatalogPage />
+      <MoviesCatalogPage v-if="!user.isAdmin" />
+
+      <AdminMoviesCatalogPage v-else />
 
     </div>
 
@@ -31,16 +35,13 @@ export default {
 <style scoped>
 .page-wrapper {
   min-height: 100vh;
-
   background: radial-gradient(circle at top,
       #0b0b0f,
       #111827 60%,
       #1f2937 140%);
-
   color: #ffffff;
   display: flex;
   justify-content: center;
-
   animation: fadeIn 0.4s ease-in-out;
 }
 

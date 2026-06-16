@@ -8,12 +8,19 @@ export default {
     data() {
         return {
             bannerProps: {
-                title: "404 - Page Not Found",
+                title: "404 - Scene Not Found",
                 logo: "/favicon/android-chrome-512x512.png",
-                tagline: "The page you are looking for doesn’t exist or has been moved.",
+                tagline: "This scene was cut, moved, or never existed in this timeline.",
                 destination: { name: "Home" },
-                buttonLabel: "Back to Home"
+                buttonLabel: "Return Home"
             }
+        }
+    },
+    methods: {
+        goBack() {
+            window.history.length > 1
+                ? this.$router.go(-1)
+                : this.$router.push({ name: "Home" });
         }
     }
 }
@@ -29,8 +36,12 @@ export default {
             <BannerComponent :bannerProps="bannerProps" />
 
             <div class="hint">
-                Tip: Stay on track — go back and continue your workout 💪
+                Looks like you’ve hit a broken reel 🎬
             </div>
+
+            <button class="back-btn" @click="goBack">
+                ← Go Back
+            </button>
 
         </div>
 
@@ -46,9 +57,9 @@ export default {
     justify-content: center;
 
     background: radial-gradient(circle at top,
-            #0f172a,
-            #0b0b0b 60%,
-            #1f2937 120%);
+            #0b0b0f,
+            #111827 60%,
+            #1f2937 140%);
 
     color: #e2e8f0;
     overflow: hidden;
@@ -58,10 +69,10 @@ export default {
     position: absolute;
     width: 500px;
     height: 500px;
-    background: rgba(56, 189, 248, 0.15);
+    background: rgba(96, 165, 250, 0.15);
     filter: blur(120px);
-    top: -100px;
-    left: -100px;
+    top: -120px;
+    left: -120px;
     border-radius: 50%;
     animation: float 6s ease-in-out infinite;
 }
@@ -90,7 +101,23 @@ export default {
     margin-top: 1.5rem;
     font-size: 0.95rem;
     color: #94a3b8;
-    opacity: 0.9;
+}
+
+.back-btn {
+    margin-top: 1.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    border: none;
+    background: #3b82f6;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.back-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
 }
 
 :deep(button) {
@@ -98,6 +125,6 @@ export default {
 }
 
 :deep(img) {
-    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.3));
+    filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.3));
 }
 </style>

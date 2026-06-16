@@ -7,6 +7,7 @@ import { useGlobalStore } from '@/stores/global.js'
 
 import AddMoviesComponent from '@/components/AddMoviesComponent.vue'
 import UpdateMoviesComponent from '@/components/UpdateMoviesComponent.vue'
+import ViewMoviesComponent from '@/components/ViewMoviesComponent.vue'
 
 const router = useRouter()
 const store = useGlobalStore()
@@ -15,25 +16,12 @@ const notyf = new Notyf()
 const movies = ref([])
 const loading = ref(true)
 
-const movieModal = ref(null)
+const viewModal = ref(null)
 
-// COMMENTS STATE
-const commentsMap = ref({})
-const commentInputs = ref({})
-
-/* =========================
-   LOAD MOVIES
-========================= */
 async function loadMovies() {
   try {
     const res = await api.get('/movies/getMovies')
     movies.value = res.data.movies
-
-    // load comments faster (parallel)
-    await Promise.all(
-      movies.value.map(movie => loadComments(movie._id))
-    )
-
   } catch (err) {
     notyf.error('Failed to load movies')
     console.error(err)
@@ -42,76 +30,10 @@ async function loadMovies() {
   }
 }
 
-/* =========================
-   LOAD COMMENTS
-========================= */
-async function loadComments(movieId) {
-  try {
-    const res = await api.get(`/movies/getComments/${movieId}`)
-    commentsMap.value[movieId] = res.data.comments
-  } catch (err) {
-    console.error("Failed to load comments", err)
-  }
-}
-
-/* =========================
-   ADD COMMENT
-========================= */
-async function submitComment(movieId) {
-  const text = commentInputs.value[movieId]
-
-  if (!text || !text.trim()) return
-
-  try {
-    await api.post(`/movies/addComment/${movieId}`, {
-      comment: text
-    })
-
-    commentInputs.value[movieId] = ''
-    await loadComments(movieId)
-
-  } catch (err) {
-    notyf.error("Failed to add comment")
-  }
-}
-
-/* =========================
-   INIT
-========================= */
 onMounted(loadMovies)
 
-/* =========================
-   EDIT MOVIE
-========================= */
-function editMovie(movie) {
-  if (!store.user.token) {
-    notyf.error('Please login first')
-    router.push({ name: 'Login' })
-    return
-  }
-
-  movieModal.value?.openEditModal(movie)
-}
-
-/* =========================
-   DELETE MOVIE
-========================= */
-async function deleteMovie(id) {
-  if (!store.user.token) {
-    notyf.error('Please login first')
-    router.push({ name: 'Login' })
-    return
-  }
-
-  if (!confirm('Delete this movie?')) return
-
-  try {
-    await api.delete(`/movies/deleteMovie/${id}`)
-    notyf.success('Movie deleted')
-    loadMovies()
-  } catch (err) {
-    notyf.error('Delete failed')
-  }
+function viewMovie(movie) {
+  viewModal.value?.openViewModal(movie)
 }
 </script>
 
@@ -119,9 +41,7 @@ async function deleteMovie(id) {
   <div class="movies-wrapper">
 
     <div class="header">
-      <h1 class="title">My Movies</h1>
-
-      <AddMoviesComponent @refresh="loadMovies" />
+      <h1 class="title">Movies Catalog</h1>
     </div>
 
     <div v-if="loading" class="loading">
@@ -129,7 +49,7 @@ async function deleteMovie(id) {
     </div>
 
     <div v-else-if="!store.user.token" class="empty">
-      Login to see your movies 🎬
+      Login to view movies 🎬
     </div>
 
     <div v-else-if="movies.length === 0" class="empty">
@@ -146,49 +66,14 @@ async function deleteMovie(id) {
 
           <p class="meta">🎬 Director: {{ m.director }}</p>
           <p class="meta">📅 Year: {{ m.year }}</p>
-          <p class="meta">🎭 Genre: {{ m.genre }}</p>
-
-          <p class="desc">{{ m.description }}</p>
 
         </div>
 
         <div class="actions">
-          <button class="btn edit" @click="editMovie(m)">
-            Edit
+
+          <button class="btn view" @click="viewMovie(m)">
+            View
           </button>
-
-          <button class="btn delete" @click="deleteMovie(m._id)">
-            Delete
-          </button>
-        </div>
-
-        <!-- 💬 COMMENT INPUT -->
-        <div class="comment-box">
-
-          <input v-model="commentInputs[m._id]" placeholder="Write a comment..." class="comment-input" />
-
-          <button class="btn comment-btn" @click="submitComment(m._id)">
-            Post
-          </button>
-
-        </div>
-
-        <!-- 💬 COMMENTS DISPLAY -->
-        <div class="comments-section">
-
-          <h4 class="comments-title">Comments</h4>
-
-          <div v-if="commentsMap[m._id] && commentsMap[m._id].length">
-
-            <div v-for="c in commentsMap[m._id]" :key="c._id" class="comment-item">
-              {{ c.comment }}
-            </div>
-
-          </div>
-
-          <div v-else class="no-comments">
-            No comments yet
-          </div>
 
         </div>
 
@@ -196,7 +81,8 @@ async function deleteMovie(id) {
 
     </div>
 
-    <UpdateMoviesComponent ref="movieModal" @refresh="loadMovies" />
+    <!-- VIEW MODAL -->
+    <ViewMoviesComponent ref="viewModal" />
 
   </div>
 </template>
@@ -210,9 +96,6 @@ async function deleteMovie(id) {
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 2rem;
 }
 
@@ -253,15 +136,8 @@ async function deleteMovie(id) {
   margin-top: 0.3rem;
 }
 
-.desc {
-  margin-top: 0.8rem;
-  color: #94a3b8;
-  font-size: 0.9rem;
-}
-
 .actions {
   display: flex;
-  gap: 0.5rem;
   margin-top: 1rem;
 }
 
@@ -271,63 +147,12 @@ async function deleteMovie(id) {
   border-radius: 999px;
   border: none;
   cursor: pointer;
-  font-size: 0.8rem;
-}
-
-.edit {
-  background: #3b82f6;
-  color: #fff;
-}
-
-.delete {
-  background: #ef4444;
-  color: #fff;
-}
-
-.comment-box {
-  margin-top: 1rem;
-  display: flex;
-  gap: 0.5rem;
-}
-
-.comment-input {
-  flex: 1;
-  padding: 0.4rem;
-  border-radius: 8px;
-  border: none;
-  background: #1f2937;
-  color: white;
-}
-
-.comment-btn {
-  background: #10b981;
-  color: white;
-  border-radius: 999px;
-}
-
-.comments-section {
-  margin-top: 1rem;
-}
-
-.comments-title {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  margin-bottom: 0.5rem;
-}
-
-.comment-item {
-  background: rgba(255, 255, 255, 0.05);
-  color: #94a3b8;
-  padding: 0.4rem;
-  border-radius: 6px;
-  margin-bottom: 0.3rem;
   font-size: 0.85rem;
 }
 
-.no-comments {
-  font-size: 0.8rem;
-  color: #64748b;
-  font-style: italic;
+.view {
+  background: #6366f1;
+  color: white;
 }
 
 .loading,

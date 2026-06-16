@@ -15,7 +15,7 @@ import HomePage from './pages/HomePage.vue';
 import RegisterPage from './pages/RegisterPage.vue';
 import LoginPage from './pages/LoginPage.vue';
 import LogoutPage from './pages/LogoutPage.vue';
-import WorkoutsPage from './pages/WorkoutsPage.vue';
+import MoviesPage from './pages/MoviesPage.vue';
 import ErrorPage from './pages/ErrorPage.vue';
 
 import { createRouter, createWebHashHistory } from 'vue-router';
@@ -46,9 +46,9 @@ const router = createRouter({
 			component: LogoutPage
 		},
 		{
-			path: '/workouts',
-			name: 'Workouts',
-			component: WorkoutsPage
+			path: '/movies',
+			name: 'Movies',
+			component: MoviesPage
 		},
 		{
 			path: '/:catchAll(.*)*',

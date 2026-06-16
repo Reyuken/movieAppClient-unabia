@@ -1,75 +1,107 @@
 <script setup>
-import { storeToRefs } from 'pinia';
 import { useGlobalStore } from '../stores/global';
 
 const store = useGlobalStore();
-const { user } = storeToRefs(store);
-// console.log(user.email)
-// console.log("USER:", user.value);
+const user = store.user;
 </script>
 
 <template>
 	<nav class="navbar navbar-expand-lg sticky-top custom-navbar shadow-sm">
-
 		<div class="container">
 
 			<router-link :to="{ path: '/' }" class="navbar-brand fw-bold brand-text d-flex align-items-center gap-2">
-
-				<!-- <img src="/favicon/favicon-32x32.png" alt="FitForge Logo" class="logo-img" /> -->
-				FitForge
+				<!-- <img src="/favicon/favicon-32x32.png" alt="MovieVault Logo" class="logo-img" /> -->
+				MovieVault
 			</router-link>
 
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 
-			<div class="collapse navbar-collapse" id="navbarNav">
-
+			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 				<div class="navbar-nav ms-auto">
 
-					<router-link :to="{ name: 'Workouts' }" class="nav-link nav-item-custom">
-						Workouts
+					<!-- Admin Badge -->
+					<div v-if="user.isAdmin" class="admin-badge">
+						<span class="dot"></span>
+						Admin
+					</div>
+
+					<!-- Movies -->
+					<router-link :to="{ name: 'Movies' }" class="nav-link nav-item-custom">
+						Movies
 					</router-link>
 
-					<router-link :to="{ name: 'Register' }" class="nav-link nav-item-custom" v-if="!user.email">
+					<!-- Watchlist (Users only) -->
+					<router-link
+						v-if="user.email && !user.isAdmin"
+						:to="{ name: 'Watchlist' }"
+						class="nav-link nav-item-custom">
+						My List
+					</router-link>
+
+					<!-- Admin Dashboard -->
+					<router-link
+						v-if="user.isAdmin"
+						:to="{ name: 'AdminDashboard' }"
+						class="nav-link nav-item-custom">
+						Dashboard
+					</router-link>
+
+					<!-- Auth -->
+					<router-link v-if="!user.email" :to="{ name: 'Register' }" class="nav-link nav-item-custom">
 						Register
 					</router-link>
 
-					<router-link :to="{ name: 'Login' }" class="nav-link nav-item-custom" v-if="!user.email">
+					<router-link v-if="!user.email" :to="{ name: 'Login' }" class="nav-link nav-item-custom">
 						Login
 					</router-link>
 
-					<router-link :to="{ name: 'Logout' }" class="nav-link nav-item-custom text-danger"
-						v-if="user.email">
+					<router-link v-if="user.email" :to="{ name: 'Logout' }" class="nav-link nav-item-custom text-danger">
 						Logout
 					</router-link>
 
 				</div>
-
 			</div>
-
 		</div>
-
 	</nav>
 </template>
 
 <style scoped>
-.navbar-toggler {
-	border: none;
+.admin-badge {
+	color: #38bdf8;
+	font-weight: 700;
+	font-size: 0.85rem;
+	letter-spacing: 0.8px;
+
+	display: flex;
+	align-items: center;
+	gap: 6px;
+
+	padding: 6px 10px;
+	margin-right: 10px;
+
+	border: 1px solid rgba(56, 189, 248, 0.4);
+	background: rgba(56, 189, 248, 0.08);
+	border-radius: 999px;
+	text-transform: uppercase;
 }
 
-.navbar-toggler-icon {
-	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 107, 0, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+.admin-badge .dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #22c55e;
+	box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
 }
 
 .custom-navbar {
-	background: #0b0b0b;
+	background: #0b0b0f;
 	padding: 0.8rem 1rem;
-	border-bottom: 1px solid rgba(255, 107, 0, 0.2);
 }
 
 .brand-text {
-	color: #ffffff !important;
+	color: #f1f5f9 !important;
 	font-size: 1.4rem;
 	letter-spacing: 0.5px;
 }
@@ -89,14 +121,14 @@ const { user } = storeToRefs(store);
 }
 
 .nav-item-custom:hover {
-	background: rgba(255, 107, 0, 0.15);
-	color: #ff6b00 !important;
+	background: rgba(59, 130, 246, 0.15);
+	color: #60a5fa !important;
 	transform: translateY(-1px);
 }
 
 .router-link-active {
-	color: #ff6b00 !important;
-	background: rgba(255, 107, 0, 0.2);
+	color: #60a5fa !important;
+	background: rgba(59, 130, 246, 0.2);
 	border-radius: 8px;
 }
 

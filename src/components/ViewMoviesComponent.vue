@@ -1,8 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { Notyf } from 'notyf'
+import { useRouter } from 'vue-router'
+import { useGlobalStore } from '@/stores/global'
 import api from '@/api'
 
+const router = useRouter()
+const store = useGlobalStore()
 const notyf = new Notyf()
 
 const isOpen = ref(false)
@@ -13,6 +17,11 @@ const commentInput = ref('')
 const loadingComments = ref(false)
 
 function openViewModal(selectedMovie) {
+  if (!store.user.token) {
+    notyf.error('Please login to view movie details')
+    router.push({ name: 'Login' })
+    return
+  }
   movie.value = selectedMovie
   isOpen.value = true
 
@@ -44,7 +53,7 @@ async function submitComment() {
   if (!commentInput.value.trim()) return
 
   try {
-    await api.post(`/movies/addComment/${movie.value._id}`, {
+    await api.post(`/addComment/${movie.value._id}`, {
       comment: commentInput.value
     })
 
@@ -78,7 +87,7 @@ defineExpose({
         <p class="desc">{{ movie?.description }}</p>
       </div>
 
-      <div class="comment-box">
+      <div class="comment-box" id="addComment">
         <input v-model="commentInput" placeholder="Write a comment..." class="input" />
 
         <button class="btn" @click="submitComment">

@@ -48,11 +48,11 @@ function viewMovie(movie) {
       Loading movies...
     </div>
 
-    <div v-else-if="!store.user.token" class="empty">
+    <!-- <div v-else-if="!store.user.token" class="empty">
       Login to view movies 🎬
-    </div>
+    </div> -->
 
-    <div v-else-if="movies.length === 0" class="empty">
+    <div v-else-if="!movies || movies.length === 0" class="empty">
       No movies found 🍿
     </div>
 

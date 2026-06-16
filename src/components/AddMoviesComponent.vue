@@ -71,38 +71,38 @@ defineExpose({
 </script>
 
 <template>
-  <button class="open-btn" @click="openModal">
-    + Add Movie
-  </button>
+    <button class="open-btn" @click="openModal">
+        + Add Movie
+    </button>
 
-  <div v-if="isOpen" class="modal-backdrop" @click.self="closeModal">
+    <div v-if="isOpen" class="modal-backdrop" @click.self="closeModal">
 
-    <div class="modal-box">
+        <div class="modal-box">
 
-      <h3>Add Movie</h3>
+            <h3>Add Movie</h3>
 
-      <input v-model="title" placeholder="Title" />
-      <input v-model="director" placeholder="Director" />
-      <input v-model="year" placeholder="Year (e.g. 2024)" />
-      <input v-model="genre" placeholder="Genre" />
+            <input v-model="title" placeholder="Title" />
+            <input v-model="director" placeholder="Director" />
+            <input v-model.number="year" type="number" placeholder="Year (e.g. 2024)" />
+            <input v-model="genre" placeholder="Genre" />
 
-      <textarea v-model="description" placeholder="Description"></textarea>
+            <textarea v-model="description" placeholder="Description"></textarea>
 
-      <div class="actions">
+            <div class="actions">
 
-        <button class="submit" @click="submitMovie">
-          Save
-        </button>
+                <button class="submit" @click="submitMovie">
+                    Save
+                </button>
 
-        <button class="cancel" @click="closeModal">
-          Cancel
-        </button>
+                <button class="cancel" @click="closeModal">
+                    Cancel
+                </button>
 
-      </div>
+            </div>
+
+        </div>
 
     </div>
-
-  </div>
 </template>
 
 <style scoped>

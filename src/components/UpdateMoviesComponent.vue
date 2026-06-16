@@ -124,7 +124,7 @@ defineExpose({
 
             <input v-model="title" placeholder="Movie title" />
             <input v-model="director" placeholder="Director" />
-            <input v-model="year" placeholder="Year (e.g. 2024)" />
+            <input v-model="year" type="number" placeholder="Year (e.g. 2024)" />
             <input v-model="genre" placeholder="Genre" />
 
             <textarea v-model="description" placeholder="Description"></textarea>

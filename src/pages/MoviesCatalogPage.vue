@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { Notyf } from 'notyf'
 import api from '../api.js'
 
@@ -11,6 +11,8 @@ const movies = ref([])
 const loading = ref(true)
 
 const viewModal = ref(null)
+
+const searchTitle = ref('')
 
 async function loadMovies() {
   try {
@@ -29,6 +31,20 @@ onMounted(loadMovies)
 function viewMovie(movie) {
   viewModal.value?.openViewModal(movie)
 }
+
+function clearSearch() {
+  searchTitle.value = ''
+}
+
+const filteredMovies = computed(() => {
+  if (!searchTitle.value.trim()) {
+    return movies.value
+  }
+
+  return movies.value.filter(m =>
+    m.title.toLowerCase().includes(searchTitle.value.toLowerCase())
+  )
+})
 </script>
 
 <template>
@@ -38,37 +54,37 @@ function viewMovie(movie) {
       <h1 class="title">Movies Catalog</h1>
     </div>
 
+    <div class="search-bar">
+      <input v-model="searchTitle" type="text" placeholder="Search movies by title..." />
+
+      <button v-if="searchTitle" @click="clearSearch">
+        Clear
+      </button>
+    </div>
+
     <div v-if="loading" class="loading">
       Loading movies...
     </div>
 
-    <div v-else-if="!movies || movies.length === 0" class="empty">
+    <div v-else-if="filteredMovies.length === 0" class="empty">
       No movies found 🍿
     </div>
 
     <div v-else class="grid">
-
-      <div v-for="m in movies" :key="m._id" class="card">
-
+      <div v-for="m in filteredMovies" :key="m._id" class="card">
         <div class="card-body">
-
           <h3 class="title-text">{{ m.title }}</h3>
 
           <p class="meta">🎬 Director: {{ m.director }}</p>
           <p class="meta">📅 Year: {{ m.year }}</p>
-
         </div>
 
         <div class="actions">
-
           <button class="btn view" @click="viewMovie(m)">
             View
           </button>
-
         </div>
-
       </div>
-
     </div>
 
     <ViewMoviesComponent ref="viewModal" />
@@ -85,7 +101,7 @@ function viewMovie(movie) {
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .title {
@@ -93,6 +109,30 @@ function viewMovie(movie) {
   font-weight: 800;
   color: #60a5fa;
   text-transform: uppercase;
+}
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 0.7rem;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: white;
+}
+
+.search-bar button {
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: #ef4444;
+  color: white;
 }
 
 .grid {

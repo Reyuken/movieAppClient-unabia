@@ -4,6 +4,7 @@ import { Notyf } from 'notyf'
 import api from '../api.js'
 
 import ViewMoviesComponent from '@/components/ViewMoviesComponent.vue'
+import SearchMoviesComponent from '@/components/SearchMoviesComponent.vue'
 
 const notyf = new Notyf()
 
@@ -11,6 +12,7 @@ const movies = ref([])
 const loading = ref(true)
 
 const viewModal = ref(null)
+const searchedMovie = ref(null)
 
 async function loadMovies() {
   try {
@@ -29,6 +31,14 @@ onMounted(loadMovies)
 function viewMovie(movie) {
   viewModal.value?.openViewModal(movie)
 }
+
+function handleFound(movie) {
+  searchedMovie.value = movie
+}
+
+function clearSearch() {
+  searchedMovie.value = null
+}
 </script>
 
 <template>
@@ -38,6 +48,30 @@ function viewMovie(movie) {
       <h1 class="title">Movies Catalog</h1>
     </div>
 
+    <!-- 🔎 SEARCH -->
+    <SearchMoviesComponent @found="handleFound" @clear="clearSearch" />
+
+    <!-- 🎯 SEARCH RESULT -->
+    <div v-if="searchedMovie" class="grid search-result">
+      <div class="card">
+
+        <div class="card-body">
+          <h3 class="title-text">{{ searchedMovie.title }}</h3>
+
+          <p class="meta">🎬 Director: {{ searchedMovie.director }}</p>
+          <p class="meta">📅 Year: {{ searchedMovie.year }}</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn view" @click="viewMovie(searchedMovie)">
+            View
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 📦 FULL LIST -->
     <div v-if="loading" class="loading">
       Loading movies...
     </div>
@@ -47,28 +81,20 @@ function viewMovie(movie) {
     </div>
 
     <div v-else class="grid">
-
       <div v-for="m in movies" :key="m._id" class="card">
-
         <div class="card-body">
-
           <h3 class="title-text">{{ m.title }}</h3>
 
           <p class="meta">🎬 Director: {{ m.director }}</p>
           <p class="meta">📅 Year: {{ m.year }}</p>
-
         </div>
 
         <div class="actions">
-
           <button class="btn view" @click="viewMovie(m)">
             View
           </button>
-
         </div>
-
       </div>
-
     </div>
 
     <ViewMoviesComponent ref="viewModal" />
@@ -148,5 +174,9 @@ function viewMovie(movie) {
 .empty {
   text-align: center;
   color: #94a3b8;
+}
+
+.search-result {
+  margin-bottom: 2rem;
 }
 </style>

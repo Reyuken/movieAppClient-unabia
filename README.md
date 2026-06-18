@@ -114,7 +114,6 @@ MovieVault allows users and admins to manage movies with authentication, CRUD op
 ---
 
 ## 📌 Notes
-- Capstone 3 demonstration project
 - Built for educational purposes
 - Focused on CRUD, authentication, role-based UI, and UI/UX design
 - Backend deployed on Render

@@ -4,7 +4,16 @@ A full-stack movie catalog application built for the Zuitt full-stack web develo
 MovieVault allows users and admins to manage movies with authentication, CRUD operations, comments, and a modern UI.
 
 ---
+##🔐 User Credentials
+👑 Admin User
+- Email: admin@mail.com
+- Password: admin123
 
+👤 Dummy Customer
+- Email: user@mail.com
+- Password:password123
+
+---
 ## ⚙️ Features
 
 ---

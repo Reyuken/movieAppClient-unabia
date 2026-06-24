@@ -10,8 +10,8 @@ MovieVault allows users and admins to manage movies with authentication, CRUD op
 - Password: admin123
 
 👤 Dummy Customer
-- Email: user@mail.com
-- Password:password123
+- Email: reuser@mail.com
+- Password:reuser123
 
 ---
 ## ⚙️ Features
